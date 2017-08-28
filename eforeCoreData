@@ -1,0 +1,117 @@
+class Buffer {
+    
+    var isFavourite: Bool = false
+    var name: String? = nil
+    var volume: Double?
+    var ingredients: [Ingredient]
+    var volumeString: String {
+        if var volume = volume {return String(Int(volume))} else {return "0 ml"}
+    }
+  
+    
+    var ingredientsDescription: String {
+        var stringToReturn = ""
+        for ingredient in ingredients {
+            stringToReturn.append(ingredient.description)
+        }
+        return stringToReturn
+    }
+    
+    var description: String {
+        if let name = name {
+            return "\(name) \nvolume - \(volumeString)ml\n\(ingredientsDescription)"}
+        else {return "no description yet, sorry"}
+    }
+    
+    func calculateConcentrations() {
+        var sumOfMolarWights: Double = self.volume!
+        var sumOfPercentages: Double = 0.0
+        for ingredient in ingredients {
+            if ingredient.percentage == false {
+            var amount = (ingredient.type!.molWeight*self.volume!/1000)*ingredient.concentration!*ingredient.multiplier!.rawValue
+            sumOfMolarWights += amount
+                ingredient.amount = amount}}
+            
+        for ingredient in ingredients {
+                if ingredient.percentage == true {
+                    print(ingredient.concentration!)
+                    sumOfPercentages += ingredient.concentration!
+                }
+        for ingredient in ingredients {
+                    if ingredient.percentage == true{
+                        var amount = (sumOfMolarWights/(100.0 - sumOfPercentages))*ingredient.concentration!
+                        ingredient.amount = amount
+                        print(amount)
+                    }
+                }
+            }
+    }
+    
+    
+    init(nameInit: String?, volume: Double?, ingredients: [Ingredient]){
+        if let name = nameInit {self.name = name}
+        if let volume = volume {self.volume = volume}
+        self.ingredients = ingredients
+    }
+    
+    init(nameInit: String?, volume: Double?, ingredients: [Ingredient], isFav: Bool){
+        if let name = nameInit {self.name = name}
+        if let volume = volume {self.volume = volume}
+        self.ingredients = ingredients
+        self.isFavourite = true
+    }
+}
+
+
+
+enum units: Double {
+    case nM = 0.000000001
+    case uM = 0.000001
+    case mM = 0.001
+    case M = 1
+}
+
+
+class Ingredient {
+    var type: Salt? // later don't make it optional
+    var concentration: Double?
+    var amount: Double?
+    var multiplier: units?
+    var percentage: Bool = false
+    
+    init(salt: Salt){
+        self.type = salt
+    }
+    var description: String {
+        if var concentration = concentration,var amount = amount {
+            var concentrationForDescription = String(concentration)
+            var amountForDescription = String(amount)
+            return "\(self.type!.name) at \(concentration) mM - \(amount) g\n"
+        } else  {return "nothing" }}
+    
+}
+
+
+
+
+class Salt: {
+    var name: String
+    var molWeight: Double
+    var subscriptedCharacters: [Int] = []
+    var attributedName: NSMutableAttributedString {
+        var name = NSMutableAttributedString(string: self.name)
+        //let attribute =  [NSBaselineOffsetAttributeName: -5]
+        for character in self.subscriptedCharacters {
+            name.addAttributes([NSBaselineOffsetAttributeName: -5], range: NSRange(location: character, length: 1))
+        }
+        return name
+        
+    }
+    init(name: String,subscriptedCharacters: [Int], molWeight: Double){
+        
+        self.name = name
+        self.subscriptedCharacters = subscriptedCharacters
+        self.molWeight = molWeight
+    }
+    
+}
